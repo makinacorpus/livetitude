@@ -3,6 +3,7 @@ import os
 from flask import Flask, g, request, abort
 import flaskext.couchdb
 import couchdb
+import simplejson
 import geojson
 from easydict import EasyDict as edict
 
@@ -39,15 +40,17 @@ def points(map_id):
 @app.route("/<map_id>/add", methods=['POST'])
 def add_point(map_id):
     try:
+        state = False
         doc = {
             'map': map_id,
             'lon': request.values['lon'],
             'lat': request.values['lat']
         }
         g.couch.save(doc)
-        return '{"ok":true}'
+        state = True
     except KeyError, e:
-        abort(500)
+        pass
+    return simplejson.dumps({'ok': state})
 
 
 if __name__ == "__main__":
