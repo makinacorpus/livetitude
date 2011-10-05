@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, g, request, abort
+from flask import Flask, g, request, abort, render_template
 import flaskext.couchdb
 import couchdb
 import simplejson
@@ -13,12 +13,12 @@ app = Flask(__name__)
 
 @app.route("/")
 def welcome():
-    return "Welcome !"
+    return render_template('index.xhtml')
 
 
 @app.route("/<map_id>")
 def map(map_id):
-    return "template of %s" % map_id
+    return render_template('map.xhtml', map_id=map_id)
 
 
 @app.route("/<map_id>/points")
