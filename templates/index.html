@@ -1,0 +1,34 @@
+<!DOCTYPE xhtml>
+<html>
+    <head>
+        <title>Livetitude</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&subset=Latin">
+        <link rel="stylesheet" href="static/style.css" />
+    </head>
+    <body>
+        <div id="go">
+            <h1>Livetitude</h1>
+            <form id="goform" action="" onsubmit="return onGoToMap(this);">
+                <label for="map_id">Go to</label>
+                <input id="map_id" type="text" value="your map id"/>
+                <input type="submit" value="Go"/>
+            </form>
+        </div>
+        <script type="text/javascript">
+            $("input#map_id").change(function() {
+                    $("#goform").attr("action", $(this).val());
+                })
+                .focus(function() {
+                    if (this.value === this.defaultValue) {
+                        this.value = '';
+                    }
+                })
+                .blur(function() {
+                    if (this.value === '') {
+                        this.value = this.defaultValue;
+                    }
+                });
+        </script>
+    </body>
+</html>

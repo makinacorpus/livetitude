@@ -1,0 +1,45 @@
+html, body, #map {
+    height: 100%;
+}
+body {
+    margin: 0px;
+    background: #CCCCCC;
+    font-family: Ubuntu, sans-serif;
+}
+h1 {
+    font-size: 4em;
+}
+#info {
+    position: absolute;
+    float: right;
+    top: 0px;
+    right: 0px;
+    padding: 20px;
+    box-shadow: 0 0 7px #CCCCCC;
+    color: #5E5E5E;
+    z-index: 10;
+    text-align: center;
+    background: rgba(255,255,255,0.6);
+}
+#info h1, #info p {
+    margin: 0px;
+}
+
+#go {
+    width: 100%;
+    text-align: center;
+    text-shadow: 0 0 8px #656565;
+}
+
+#go input[type="submit"] {
+    padding: 0;
+    border: 0;
+    color: transparent;
+    background:url(/static/go.png) no-repeat;
+    width: 38px;
+    height: 38px;
+}
+
+.leaflet-popup-content {
+    text-align: center;
+}

@@ -6,19 +6,22 @@ import couchdb
 import simplejson
 import geojson
 from easydict import EasyDict as edict
+import pusher
 
+from settings import Settings
 
 app = Flask(__name__)
+settings = Settings()
 
 
 @app.route("/")
 def welcome():
-    return render_template('index.xhtml')
+    return render_template('index.html')
 
 
 @app.route("/<map_id>")
 def map(map_id):
-    return render_template('map.xhtml', map_id=map_id)
+    return render_template('map.html', map_id=map_id, pusher_key=pusher.key)
 
 
 @app.route("/<map_id>/points")
@@ -47,6 +50,8 @@ def add_point(map_id):
             'lat': request.values['lat']
         }
         g.couch.save(doc)
+        p = pusher.Pusher()
+        p['points'].trigger('add', doc)
         state = True
     except KeyError, e:
         pass
@@ -54,9 +59,12 @@ def add_point(map_id):
 
 
 if __name__ == "__main__":
-    app.config.from_object(os.environ.get("SETTINGS", 'settings.Settings'))
+    pusher.app_id = settings.PUSHER_ID
+    pusher.key = settings.PUSHER_KEY
+    pusher.secret = settings.PUSHER_SECRET
+    app.config.from_object(settings)
     manager = flaskext.couchdb.CouchDBManager()
     manager.setup(app)
     manager.sync(app)
-    port = int(os.environ.get("PORT", 5000))
+    port = settings.PORT
     app.run(host='0.0.0.0', port=port)
