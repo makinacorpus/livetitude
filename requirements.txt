@@ -1,4 +1,4 @@
 Flask-CouchDB==0.2.1
-geojson=1.0.1
-easydict=1.2
-pusher=0.5
+geojson==1.0.1
+easydict==1.2
+pusher==0.5
