@@ -22,11 +22,15 @@
     </head>
     <body>
         <div id="map"></div>
+        {% if not embed %}
         <div id="info">
             <h1>{{ map_id }}</h1>
             <p>Single clic to add points.</p>
             <input id="followme" type="checkbox"/>
-            <label for="followme">Follow me !</label>
+            <label for="followme">Follow me !</label><br/>
+            <label for="embed">&lt;&gt;</label>
+            <input id="embed" type="text" value="&lt;iframe width=&quot;425&quot; height=&quot;350&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;{{ request.base_url }}?embed=true&quot;&gt;&lt;/iframe&gt;">
         </div>
+        {% endif %}
     </body>
 </html>

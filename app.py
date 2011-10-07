@@ -30,7 +30,9 @@ def welcome():
 
 @app.route("/<map_id>")
 def map(map_id):
-    return render_template('map.html', map_id=map_id)
+    return render_template('map.html', 
+                           map_id=map_id, 
+                           embed=request.values.get('embed', False))
 
 
 @app.route("/<map_id>/points")
