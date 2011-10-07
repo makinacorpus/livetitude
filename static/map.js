@@ -16,20 +16,26 @@ $(document).ready(function() {
     
     // GeoJSON layer
     $.getJSON(urljson, function(data) {
-        var geojsonLayer = new L.GeoJSON(data, {
-        pointToLayer: function (latlng) {
-                return new L.Marker(latlng);
-            }
+        var geojsonLayer = new L.GeoJSON();        
+        geojsonLayer.on("featureparse", function (e) {
+            if (e.properties) e.layer.bindPopup(buildMarkerPopup(e.properties));
         });
+        geojsonLayer.addGeoJSON(data);
         map.addLayer(geojsonLayer);
     });
     
     map.locateAndSetView();
 });
 
-function onPointAdd(point) {
-    var markerLocation = new L.LatLng(point.lat, point.lon),
-        marker = new L.Marker(markerLocation);
+function buildMarkerPopup(properties) {
+    var template = '{{ data }}<br/>{{ timestamp }}';
+    return Mustache.to_html(template, properties)
+}
+
+function onPointAdd(item) {
+    var latlng = new L.LatLng(item.lat, item.lon),
+        marker = new L.Marker(latlng);
+    if (item.properties) marker.bindPopup(buildMarkerPopup(item.properties));
     map.addLayer(marker);
 }
 
@@ -40,16 +46,14 @@ function onLocationFound(e) {
 function onMapClick(e) {
     popup = new L.Popup();
     var latlon = '(' + e.latlng.lat.toFixed(3) + ', ' + e.latlng.lng.toFixed(3) + ')';
-    var template = '{{# latlon }}' +
-                   '<p>Add a point at {{ latlon }} ?</p>' +
+    var template = '<p>Add a point at {{ latlon }} ?</p>' +
                    '<form id="addpoint" onsubmit="return onAddPoint(this);">' +
                    '  <input type="hidden" name="classid" value="1"/>' +
                    '  <textarea name="data"></textarea>' +
                    '  <input type="hidden" name="lon" value="{{ lon }}"/>' +
                    '  <input type="hidden" name="lat" value="{{ lat }}"/>' +
                    '  <input type="submit" value="Ok"/>' +
-                   '</form>' +
-                   '{{/ latlon }}';
+                   '</form>';
 
     var content = Mustache.to_html(template, {'latlon': latlon, 'lon': e.latlng.lng, 'lat': e.latlng.lat});
     popup.setLatLng(e.latlng);
