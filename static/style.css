@@ -54,3 +54,13 @@ h1 {
 .leaflet-popup-content .class5 { background-color: blue; }
 .leaflet-popup-content .class6 { background-color: pink; }
 .leaflet-popup-content .class7 { background-color: purple; }
+
+.leaflet-popup-content textarea {
+    width: 250px;
+    height: 150px;
+}
+
+.leaflet-popup-content span {
+    display: inline-block;
+}
+
