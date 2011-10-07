@@ -47,9 +47,12 @@ $(document).ready(function() {
 });
 
 function buildMarkerPopup(properties) {
-    var template = '{{{ data }}}<br/>{{ timestamp }}';
-    var date = new Date(properties.timestamp);
-    properties['timestamp'] = date.toUTCString();
+    var template = '{{{ data }}}';
+    if (properties.timestamp) {
+        template += '<br/>{{ timestamp }}';
+        var date = new Date(properties.timestamp*1000);
+        properties['timestamp'] = date.toUTCString();
+    }
     return Mustache.to_html(template, properties)
 }
 
