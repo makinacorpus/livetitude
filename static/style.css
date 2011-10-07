@@ -12,7 +12,7 @@ h1 {
 #info {
     position: absolute;
     float: right;
-    top: 0px;
+    bottom: 18px;
     right: 0px;
     padding: 20px;
     box-shadow: 0 0 7px #CCCCCC;
