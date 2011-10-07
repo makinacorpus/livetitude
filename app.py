@@ -38,13 +38,11 @@ def points(map_id):
     features = []
     for row in points_by_map(g.couch)[map_id]:
         row = edict(row.value)
-        properties = {
-            'data': row.data,
-            'class': row.classid,
-            'timestamp': row.timestamp
-        }
-        f = geojson.Feature(geojson.Point([row.lon, row.lat]),
-                            properties)
+        id = row._id
+        for k in ['_id', '_rev']: del row[k]
+        f = geojson.Feature(id=row._id,
+                            geometry=geojson.Point([row.lon, row.lat]),
+                            properties=row)
         features.append(f)
     mapcontent = geojson.FeatureCollection(features)
     return geojson.dumps(mapcontent)
