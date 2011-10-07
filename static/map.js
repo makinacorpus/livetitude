@@ -31,6 +31,18 @@ $(document).ready(function() {
         }
     });
     map.setView(new L.LatLng(0, 0), 2); 
+    
+    // Follow me ?
+    $("input#followme").change(function() {
+        if($(this).is(':checked')){
+            map.locate({watch: true,
+                        setView: true,
+                        enableHighAccuracy: true});
+        }
+        else {
+            map.stopLocate();
+        }
+    });
 });
 
 function buildMarkerPopup(properties) {

@@ -24,6 +24,9 @@ h1 {
 #info h1, #info p {
     margin: 0px;
 }
+#info p {
+    margin-bottom: 20px;
+}
 
 #go {
     width: 100%;
