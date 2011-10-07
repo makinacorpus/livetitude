@@ -13,10 +13,10 @@
         <script type="text/javascript">
             var map;
             var popup;
-            var pusher = new Pusher('{{ pusher_key }}');
+            var pusher = new Pusher('{{ config.PUSHER_KEY }}');
             var urljson = '{{ url_for("points", map_id=map_id) }}';
             var urladd = '{{ url_for("add_point", map_id=map_id) }}';
-            var urltiles = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png';
+            var urltiles = '{{ config.TILES_URL }}';
         </script>
         <script src="static/map.js" type="text/javascript"></script>
     </head>

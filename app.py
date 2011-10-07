@@ -21,7 +21,7 @@ def welcome():
 
 @app.route("/<map_id>")
 def map(map_id):
-    return render_template('map.html', map_id=map_id, pusher_key=pusher.key)
+    return render_template('map.html', map_id=map_id)
 
 
 @app.route("/<map_id>/points")
