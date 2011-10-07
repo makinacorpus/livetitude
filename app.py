@@ -4,6 +4,7 @@ import time
 from flask import Flask, g, request, abort, render_template
 import flaskext.couchdb
 import couchdb
+from couchdb.design import ViewDefinition
 import simplejson
 import geojson
 from easydict import EasyDict as edict
@@ -13,6 +14,13 @@ from settings import Settings
 
 app = Flask(__name__)
 settings = Settings()
+
+
+"""
+CouchDB permanent queries
+"""
+points_by_map = ViewDefinition('points', 'bymap', 
+                               'function(doc) { emit(doc.map, doc);}')
 
 
 @app.route("/")
@@ -27,13 +35,8 @@ def map(map_id):
 
 @app.route("/<map_id>/points")
 def points(map_id):
-    query = '''
-    function(doc) {
-        emit(doc.map, doc);
-    }'''
-    results = g.couch.query(query)
     features = []
-    for row in results[map_id]:
+    for row in points_by_map(g.couch)[map_id]:
         row = edict(row.value)
         properties = {
             'data': row.data,
@@ -75,6 +78,7 @@ if __name__ == "__main__":
     app.config.from_object(settings)
     manager = flaskext.couchdb.CouchDBManager()
     manager.setup(app)
+    manager.add_viewdef(points_by_map)
     manager.sync(app)
     port = settings.PORT
     app.run(host='0.0.0.0', port=port)
