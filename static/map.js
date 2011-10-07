@@ -1,7 +1,7 @@
 $(document).ready(function() {
     // Pusher connection
     var channel = pusher.subscribe('points');
-    channel.bind('add', onPointAdd);
+    channel.bind('add', onPointAdded);
     
     
     // Map initialization
@@ -57,13 +57,11 @@ function setMarkerIcon(m, properties) {
     m.setIcon(new L.Icon('static/marker'+classid+'.png'));
 }
 
-function onPointAdd(item) {
-    if (!item.properties) return;
-    
+function onPointAdded(item) {  
     var latlng = new L.LatLng(item.lat, item.lon),
-            marker = new L.Marker(latlng, icon);
-    marker.bindPopup(buildMarkerPopup(item.properties));
-    setMarkerIcon(marker, item.properties);
+            marker = new L.Marker(latlng);
+    marker.bindPopup(buildMarkerPopup(item));
+    setMarkerIcon(marker, item);
     map.addLayer(marker);
 }
 
@@ -80,7 +78,7 @@ function onMapClick(e) {
                    '  <span class="class2"><input type="radio" name="classid" value="2"/></span>' +
                    '  <span class="class3"><input type="radio" name="classid" value="3"/></span>' +
                    '  <span class="class4"><input type="radio" name="classid" value="4"/></span>' +
-                   '  <span class="class5"><input type="radio" name="classid" value="5"/></span>' +
+                   '  <span class="class5"><input type="radio" name="classid" value="5" selected="selected"/></span>' +
                    '  <span class="class6"><input type="radio" name="classid" value="6"/></span>' +
                    '  <span class="class7"><input type="radio" name="classid" value="7"/></span>' +
                    '  <textarea name="data"></textarea><br/>' +
