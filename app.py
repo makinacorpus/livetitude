@@ -1,4 +1,5 @@
 import os
+import time
 
 from flask import Flask, g, request, abort, render_template
 import flaskext.couchdb
@@ -34,8 +35,14 @@ def points(map_id):
     features = []
     for row in results[map_id]:
         row = edict(row.value)
-        p = geojson.Point([row.lon, row.lat])
-        features.append(p)
+        properties = {
+            'data': row.data,
+            'class': row.classid,
+            'timestamp': row.timestamp
+        }
+        f = geojson.Feature(geojson.Point([row.lon, row.lat]),
+                            properties)
+        features.append(f)
     mapcontent = geojson.FeatureCollection(features)
     return geojson.dumps(mapcontent)
 
@@ -47,7 +54,10 @@ def add_point(map_id):
         doc = {
             'map': map_id,
             'lon': request.values['lon'],
-            'lat': request.values['lat']
+            'lat': request.values['lat'],
+            'data': request.values['data'],
+            'classid': request.values['classid'],
+            'timestamp': int(time.time()),
         }
         g.couch.save(doc)
         p = pusher.Pusher()

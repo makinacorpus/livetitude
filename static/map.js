@@ -43,6 +43,8 @@ function onMapClick(e) {
     var template = '{{# latlon }}' +
                    '<p>Add a point at {{ latlon }} ?</p>' +
                    '<form id="addpoint" onsubmit="return onAddPoint(this);">' +
+                   '  <input type="hidden" name="classid" value="1"/>' +
+                   '  <textarea name="data"></textarea>' +
                    '  <input type="hidden" name="lon" value="{{ lon }}"/>' +
                    '  <input type="hidden" name="lat" value="{{ lat }}"/>' +
                    '  <input type="submit" value="Ok"/>' +
