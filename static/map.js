@@ -49,7 +49,7 @@ $(document).ready(function() {
 function buildMarkerPopup(properties) {
     var template = '{{{ data }}}';
     if (properties.timestamp) {
-        template += '<br/>{{ timestamp }}';
+        template += '<br/><div class="timestamp">{{ timestamp }}</div>';
         var date = new Date(properties.timestamp*1000);
         properties['timestamp'] = date.toUTCString();
     }
