@@ -22,6 +22,7 @@ $(document).ready(function() {
         geojsonLayer.on("featureparse", function (e) {
             if (e.properties) e.layer.bindPopup(buildMarkerPopup(e.properties));
             bounds.extend(e.layer.getLatLng());
+            setMarkerIcon(e.layer, e.properties);
             nb++;
         });
         geojsonLayer.addGeoJSON(data);
@@ -50,10 +51,19 @@ function buildMarkerPopup(properties) {
     return Mustache.to_html(template, properties)
 }
 
+function setMarkerIcon(m, properties) {
+    var icon = {},
+        classid = properties.class ? properties.class : 5;
+    m.setIcon(new L.Icon('static/marker'+classid+'.png'));
+}
+
 function onPointAdd(item) {
+    if (!item.properties) return;
+    
     var latlng = new L.LatLng(item.lat, item.lon),
-        marker = new L.Marker(latlng);
-    if (item.properties) marker.bindPopup(buildMarkerPopup(item.properties));
+            marker = new L.Marker(latlng, icon);
+    marker.bindPopup(buildMarkerPopup(item.properties));
+    setMarkerIcon(marker, item.properties);
     map.addLayer(marker);
 }
 
@@ -66,8 +76,14 @@ function onMapClick(e) {
     var latlon = '(' + e.latlng.lat.toFixed(3) + ', ' + e.latlng.lng.toFixed(3) + ')';
     var template = '<p>Add a point at {{ latlon }} ?</p>' +
                    '<form id="addpoint" onsubmit="return onAddPoint(this);">' +
-                   '  <input type="hidden" name="classid" value="1"/>' +
-                   '  <textarea name="data"></textarea>' +
+                   '  <span class="class1"><input type="radio" name="class" value="1"/></span>' +
+                   '  <span class="class2"><input type="radio" name="class" value="2"/></span>' +
+                   '  <span class="class3"><input type="radio" name="class" value="3"/></span>' +
+                   '  <span class="class4"><input type="radio" name="class" value="4"/></span>' +
+                   '  <span class="class5"><input type="radio" name="class" value="5"/></span>' +
+                   '  <span class="class6"><input type="radio" name="class" value="6"/></span>' +
+                   '  <span class="class7"><input type="radio" name="class" value="7"/></span>' +
+                   '  <textarea name="data"></textarea><br/>' +
                    '  <input type="hidden" name="lon" value="{{ lon }}"/>' +
                    '  <input type="hidden" name="lat" value="{{ lat }}"/>' +
                    '  <input type="submit" value="Ok"/>' +
