@@ -16,15 +16,21 @@ $(document).ready(function() {
     
     // GeoJSON layer
     $.getJSON(urljson, function(data) {
-        var geojsonLayer = new L.GeoJSON();        
+        var geojsonLayer = new L.GeoJSON(),
+            bounds = new L.LatLngBounds(),
+            nb = 0;
         geojsonLayer.on("featureparse", function (e) {
             if (e.properties) e.layer.bindPopup(buildMarkerPopup(e.properties));
+            bounds.extend(e.layer.getLatLng());
+            nb++;
         });
         geojsonLayer.addGeoJSON(data);
         map.addLayer(geojsonLayer);
+        if (nb>0) {
+            map.fitBounds(bounds);
+        }
     });
-    
-    map.locateAndSetView();
+    map.setView(new L.LatLng(0, 0), 2); 
 });
 
 function buildMarkerPopup(properties) {
