@@ -47,7 +47,9 @@ $(document).ready(function() {
 });
 
 function buildMarkerPopup(properties) {
-    var template = '{{ data }}<br/>{{ timestamp }}';
+    var template = '{{{ data }}}<br/>{{ timestamp }}';
+    var date = new Date(properties.timestamp);
+    properties['timestamp'] = date.toUTCString();
     return Mustache.to_html(template, properties)
 }
 
@@ -78,7 +80,7 @@ function onMapClick(e) {
                    '  <span class="class2"><input type="radio" name="classid" value="2"/></span>' +
                    '  <span class="class3"><input type="radio" name="classid" value="3"/></span>' +
                    '  <span class="class4"><input type="radio" name="classid" value="4"/></span>' +
-                   '  <span class="class5"><input type="radio" name="classid" value="5" selected="selected"/></span>' +
+                   '  <span class="class5"><input type="radio" name="classid" value="5" checked="checked"/></span>' +
                    '  <span class="class6"><input type="radio" name="classid" value="6"/></span>' +
                    '  <span class="class7"><input type="radio" name="classid" value="7"/></span>' +
                    '  <textarea name="data"></textarea><br/>' +
