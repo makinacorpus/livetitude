@@ -53,7 +53,7 @@ function buildMarkerPopup(properties) {
 
 function setMarkerIcon(m, properties) {
     var icon = {},
-        classid = properties.class ? properties.class : 5;
+        classid = properties.classid ? properties.classid : 5;
     m.setIcon(new L.Icon('static/marker'+classid+'.png'));
 }
 
@@ -76,13 +76,13 @@ function onMapClick(e) {
     var latlon = '(' + e.latlng.lat.toFixed(3) + ', ' + e.latlng.lng.toFixed(3) + ')';
     var template = '<p>Add a point at {{ latlon }} ?</p>' +
                    '<form id="addpoint" onsubmit="return onAddPoint(this);">' +
-                   '  <span class="class1"><input type="radio" name="class" value="1"/></span>' +
-                   '  <span class="class2"><input type="radio" name="class" value="2"/></span>' +
-                   '  <span class="class3"><input type="radio" name="class" value="3"/></span>' +
-                   '  <span class="class4"><input type="radio" name="class" value="4"/></span>' +
-                   '  <span class="class5"><input type="radio" name="class" value="5"/></span>' +
-                   '  <span class="class6"><input type="radio" name="class" value="6"/></span>' +
-                   '  <span class="class7"><input type="radio" name="class" value="7"/></span>' +
+                   '  <span class="class1"><input type="radio" name="classid" value="1"/></span>' +
+                   '  <span class="class2"><input type="radio" name="classid" value="2"/></span>' +
+                   '  <span class="class3"><input type="radio" name="classid" value="3"/></span>' +
+                   '  <span class="class4"><input type="radio" name="classid" value="4"/></span>' +
+                   '  <span class="class5"><input type="radio" name="classid" value="5"/></span>' +
+                   '  <span class="class6"><input type="radio" name="classid" value="6"/></span>' +
+                   '  <span class="class7"><input type="radio" name="classid" value="7"/></span>' +
                    '  <textarea name="data"></textarea><br/>' +
                    '  <input type="hidden" name="lon" value="{{ lon }}"/>' +
                    '  <input type="hidden" name="lat" value="{{ lat }}"/>' +
