@@ -13,6 +13,7 @@
         <script type="text/javascript">
             var map;
             var popup;
+            var map_id = '{{ map_id }}';
             var pusher = new Pusher('{{ config.PUSHER_KEY }}');
             var urljson = '{{ url_for("points", map_id=map_id) }}';
             var urladd = '{{ url_for("add_point", map_id=map_id) }}';

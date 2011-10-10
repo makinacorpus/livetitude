@@ -65,7 +65,7 @@ def add_point(map_id):
         g.couch.save(doc)
         if settings.PUSHER_ID:
             p = pusher.Pusher()
-            p['points'].trigger('add', doc)
+            p['points-%s' % map_id].trigger('add', doc)
         state = True
     except KeyError, e:
         pass

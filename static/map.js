@@ -1,6 +1,6 @@
 $(document).ready(function() {
     // Pusher connection
-    var channel = pusher.subscribe('points');
+    var channel = pusher.subscribe('points-' + map_id);
     channel.bind('add', onPointAdded);
     
     
