@@ -63,8 +63,9 @@ def add_point(map_id):
             'timestamp': int(time.time()),
         }
         g.couch.save(doc)
-        p = pusher.Pusher()
-        p['points'].trigger('add', doc)
+        if settings.PUSHER_ID:
+            p = pusher.Pusher()
+            p['points'].trigger('add', doc)
         state = True
     except KeyError, e:
         pass
@@ -80,5 +81,4 @@ if __name__ == "__main__":
     manager.setup(app)
     manager.add_viewdef(points_by_map)
     manager.sync(app)
-    port = settings.PORT
-    app.run(host='0.0.0.0', port=port)
+    app.run(host=settings.HOST, port=settings.PORT)
