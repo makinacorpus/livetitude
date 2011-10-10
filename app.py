@@ -40,9 +40,8 @@ def points(map_id):
     features = []
     for row in points_by_map(g.couch)[map_id]:
         row = edict(row.value)
-        id = row._id
         # Guess geometries from coordinates
-        if len(row.coords) != 2:
+        if not row.coords or len(row.coords) != 2:
             continue   #TODO: linestrings, polygons...
         geom = geojson.Point(row.coords)
         # Strip useless properties
@@ -58,8 +57,16 @@ def points(map_id):
 @app.route("/<map_id>/add", methods=['POST'])
 def add_point(map_id):
     try:
-        coords = map(float, request.values['coords'].split(','))
         state = False
+
+        # Data Validation
+        coords = map(float, request.values['coords'].split(','))
+        if len(coords) != 2 or abs(coords[0]) > 180 or abs(coords[1]) > 90:
+            raise ValueError("Invalid coordinates %s" % coords)
+        if len(request.values['data']) > settings.DATA_MAX_SIZE:
+            raise ValueError("Data size over limit (%s)" % settings.DATA_MAX_SIZE)
+
+        # Insert into database
         doc = {
             'map': map_id,
             'coords': coords,
@@ -68,6 +75,8 @@ def add_point(map_id):
             'timestamp': int(time.time()),
         }
         g.couch.save(doc)
+
+        # Send to websocket !
         if settings.PUSHER_ID:
             p = pusher.Pusher()
             p['points-%s' % map_id].trigger('add', doc)

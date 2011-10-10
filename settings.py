@@ -11,3 +11,4 @@ class Settings(object):
     PUSHER_KEY = os.environ.get('PUSHER_KEY')
     PUSHER_SECRET = os.environ.get('PUSHER_SECRET')
     TILES_URL = os.environ.get('TILES_URL', 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png')
+    DATA_MAX_SIZE = int(os.environ.get('DATA_MAX_SIZE', 256))

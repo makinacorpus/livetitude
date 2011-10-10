@@ -76,8 +76,7 @@ function onLocationFound(e) {
 
 function onMapClick(e) {
     popup = new L.Popup();
-    var latlon = '(' + e.latlng.lat.toFixed(3) + ', ' + e.latlng.lng.toFixed(3) + ')';
-    var template = '<p>Add a point at {{ latlon }} ?</p>' +
+    var template = '<p>Add a point at ({{ lat }}, {{ lon }}) ?</p>' +
                    '<form id="addpoint" onsubmit="return onAddPoint(this);">' +
                    '  <span class="class1"><input type="radio" name="classid" value="1"/></span>' +
                    '  <span class="class2"><input type="radio" name="classid" value="2"/></span>' +
@@ -86,12 +85,14 @@ function onMapClick(e) {
                    '  <span class="class5"><input type="radio" name="classid" value="5" checked="checked"/></span>' +
                    '  <span class="class6"><input type="radio" name="classid" value="6"/></span>' +
                    '  <span class="class7"><input type="radio" name="classid" value="7"/></span>' +
-                   '  <textarea name="data"></textarea><br/>' +
+                   '  <textarea name="data" maxlength="{{ data_maxsize }}"></textarea><br/>' +
                    '  <input type="hidden" name="coords" value="{{ lon }},{{ lat }}"/>' +
                    '  <input type="submit" value="Ok"/>' +
                    '</form>';
 
-    var content = Mustache.to_html(template, {'latlon': latlon, 'lon': e.latlng.lng, 'lat': e.latlng.lat});
+    var content = Mustache.to_html(template, {'data_maxsize': data_maxsize,
+                                              'lon': e.latlng.lng.toFixed(4), 
+                                              'lat': e.latlng.lat.toFixed(4)});
     popup.setLatLng(e.latlng);
     popup.setContent(content);
     map.openPopup(popup);
