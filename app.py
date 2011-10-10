@@ -29,7 +29,7 @@ def welcome():
 
 
 @app.route("/<map_id>")
-def map(map_id):
+def viewmap(map_id):
     return render_template('map.html', 
                            map_id=map_id, 
                            embed=request.values.get('embed', False))
@@ -41,9 +41,14 @@ def points(map_id):
     for row in points_by_map(g.couch)[map_id]:
         row = edict(row.value)
         id = row._id
-        for k in ['_id', '_rev']: del row[k]
+        # Guess geometries from coordinates
+        if len(row.coords) != 2:
+            continue   #TODO: linestrings, polygons...
+        geom = geojson.Point(row.coords)
+        # Strip useless properties
+        for k in ['_id', '_rev', 'coords']: del row[k]
         f = geojson.Feature(id=row._id,
-                            geometry=geojson.Point([row.lon, row.lat]),
+                            geometry=geom,
                             properties=row)
         features.append(f)
     mapcontent = geojson.FeatureCollection(features)
@@ -53,11 +58,11 @@ def points(map_id):
 @app.route("/<map_id>/add", methods=['POST'])
 def add_point(map_id):
     try:
+        coords = map(float, request.values['coords'].split(','))
         state = False
         doc = {
             'map': map_id,
-            'lon': request.values['lon'],
-            'lat': request.values['lat'],
+            'coords': coords,
             'data': request.values['data'],
             'classid': request.values['classid'],
             'timestamp': int(time.time()),
@@ -67,7 +72,7 @@ def add_point(map_id):
             p = pusher.Pusher()
             p['points-%s' % map_id].trigger('add', doc)
         state = True
-    except KeyError, e:
+    except (KeyError, ValueError), e:
         pass
     return simplejson.dumps({'ok': state})
 

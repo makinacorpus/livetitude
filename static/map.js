@@ -62,8 +62,8 @@ function setMarkerIcon(m, properties) {
     m.setIcon(new L.Icon('static/marker'+classid+'.png'));
 }
 
-function onPointAdded(item) {  
-    var latlng = new L.LatLng(item.lat, item.lon),
+function onPointAdded(item) {
+    var latlng = new L.LatLng(item.coords[1], item.coords[0]),
             marker = new L.Marker(latlng);
     marker.bindPopup(buildMarkerPopup(item));
     setMarkerIcon(marker, item);
@@ -87,8 +87,7 @@ function onMapClick(e) {
                    '  <span class="class6"><input type="radio" name="classid" value="6"/></span>' +
                    '  <span class="class7"><input type="radio" name="classid" value="7"/></span>' +
                    '  <textarea name="data"></textarea><br/>' +
-                   '  <input type="hidden" name="lon" value="{{ lon }}"/>' +
-                   '  <input type="hidden" name="lat" value="{{ lat }}"/>' +
+                   '  <input type="hidden" name="coords" value="{{ lon }},{{ lat }}"/>' +
                    '  <input type="submit" value="Ok"/>' +
                    '</form>';
 
