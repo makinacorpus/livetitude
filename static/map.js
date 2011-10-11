@@ -47,9 +47,8 @@ $(document).ready(function() {
 });
 
 function buildMarkerPopup(properties) {
-    var template = '{{{ data }}}';
+    var template = $('#template_marker').html();
     if (properties.timestamp) {
-        template += '<br/><div class="timestamp">{{ timestamp }}</div>';
         var date = new Date(properties.timestamp*1000);
         properties['timestamp'] = date.toUTCString();
     }
@@ -76,20 +75,7 @@ function onLocationFound(e) {
 
 function onMapClick(e) {
     popup = new L.Popup();
-    var template = '<p>Add a point at ({{ lat }}, {{ lon }}) ?</p>' +
-                   '<form id="addpoint" onsubmit="return onAddPoint(this);">' +
-                   '  <span class="class1"><input type="radio" name="classid" value="1"/></span>' +
-                   '  <span class="class2"><input type="radio" name="classid" value="2"/></span>' +
-                   '  <span class="class3"><input type="radio" name="classid" value="3"/></span>' +
-                   '  <span class="class4"><input type="radio" name="classid" value="4"/></span>' +
-                   '  <span class="class5"><input type="radio" name="classid" value="5" checked="checked"/></span>' +
-                   '  <span class="class6"><input type="radio" name="classid" value="6"/></span>' +
-                   '  <span class="class7"><input type="radio" name="classid" value="7"/></span>' +
-                   '  <textarea name="data" maxlength="{{ data_maxsize }}"></textarea><br/>' +
-                   '  <input type="hidden" name="coords" value="{{ lon }},{{ lat }}"/>' +
-                   '  <input type="submit" value="Ok"/>' +
-                   '</form>';
-
+    var template = $('#template_addpoint').html();
     var content = Mustache.to_html(template, {'data_maxsize': data_maxsize,
                                               'lon': e.latlng.lng.toFixed(4), 
                                               'lat': e.latlng.lat.toFixed(4)});

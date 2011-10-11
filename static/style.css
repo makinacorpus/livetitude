@@ -6,9 +6,19 @@ body {
     background: #CCCCCC;
     font-family: Ubuntu, sans-serif;
 }
+
+#template_marker {
+    display: none;
+}
+
+#template_addpoint {
+    display: none;
+}
+
 h1 {
     font-size: 4em;
 }
+
 #info {
     position: absolute;
     float: right;

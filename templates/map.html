@@ -33,6 +33,30 @@
             <label for="embed">&lt;&gt;</label>
             <input id="embed" type="text" value="&lt;iframe width=&quot;425&quot; height=&quot;350&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;{{ request.base_url }}?embed=true&quot;&gt;&lt;/iframe&gt;">
         </div>
+        {% raw %}
+        <!-- Mustache templates -->
+        <div id="template_marker">
+            {{{data}}}
+            {{#timestamp}}
+            <div class="timestamp">{{timestamp}}</div>
+            {{/timestamp}}
+        </div>
+        <div id="template_addpoint">
+            <p>Add a point at ({{lat}}, {{lon}}) ?</p>
+            <form id="addpoint" onsubmit="return onAddPoint(this);"> 
+                <span class="class1"><input type="radio" name="classid" value="1"/></span> 
+                <span class="class2"><input type="radio" name="classid" value="2"/></span> 
+                <span class="class3"><input type="radio" name="classid" value="3"/></span> 
+                <span class="class4"><input type="radio" name="classid" value="4"/></span> 
+                <span class="class5"><input type="radio" name="classid" value="5" checked="checked"/></span> 
+                <span class="class6"><input type="radio" name="classid" value="6"/></span> 
+                <span class="class7"><input type="radio" name="classid" value="7"/></span> 
+                <textarea name="data" maxlength="{{data_maxsize}}"></textarea><br/> 
+                <input type="hidden" name="coords" value="{{lon}},{{lat}}"/> 
+                <input type="submit" value="Ok"/> 
+            </form>
+        </div>
+        {% endraw %}
         {% endif %}
     </body>
 </html>
