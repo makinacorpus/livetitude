@@ -6,7 +6,7 @@ from flask import Flask, g, request, abort, render_template
 import flaskext.couchdb
 import couchdb
 from couchdb.design import ViewDefinition
-from couchdb import ResourceNotFound
+from couchdb import ResourceNotFound, ResourceConflict
 import simplejson
 import geojson
 from easydict import EasyDict as edict
@@ -102,7 +102,10 @@ def del_point(map_id):
             p = pusher.Pusher()
             p['points-%s' % map_id].trigger('del', doc)
         state = True
-    except (ResourceNotFound, KeyError, AssertionError), e:
+    except (ResourceNotFound, 
+            ResourceConflict,
+            KeyError, 
+            AssertionError), e:
         pass
     return simplejson.dumps({'ok': state})
 
