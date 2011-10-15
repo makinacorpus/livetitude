@@ -7,6 +7,7 @@ $(document).ready(function() {
     var channel = pusher.subscribe('points-' + map_id);
     channel.bind('add', onPointAdded);
     channel.bind('del', onPointDeleted);
+    channel.bind('move', onPointMoved);
     
     // Map initialization
     map = new L.Map('map');
@@ -31,7 +32,7 @@ $(document).ready(function() {
                 markers[e.id] = e.layer;
             }
             bounds.extend(e.layer.getLatLng());
-            setMarkerIcon(e.layer, e.properties);
+            initMarker(e.layer, e.properties);
             nb++;
         });
         geojsonLayer.addGeoJSON(data);
@@ -64,7 +65,13 @@ function buildMarkerPopup(properties) {
     return Mustache.to_html(template, properties)
 }
 
-function setMarkerIcon(m, properties) {
+function initMarker(m, properties) {
+    // Events
+    L.Util.setOptions(m, {'draggable': true});
+    m.on('dragend', function(e) {
+        movePoint(properties._id, e.target.getLatLng());
+    });
+    // Icon
     var icon = {},
         classid = properties.classid ? properties.classid : 5;
     m.setIcon(new L.Icon('static/marker'+classid+'.png'));
@@ -74,7 +81,7 @@ function onPointAdded(item) {
     var latlng = new L.LatLng(item.coords[1], item.coords[0]),
             marker = new L.Marker(latlng);
     marker.bindPopup(buildMarkerPopup(item));
-    setMarkerIcon(marker, item);
+    initMarker(marker, item);
     markers[item._id] = marker;
     map.addLayer(marker);
 }
@@ -84,6 +91,14 @@ function onPointDeleted(item) {
     if (marker) {
         marker.closePopup();
         map.removeLayer(marker);
+    }
+}
+
+function onPointMoved(item) {
+    var latlng = new L.LatLng(item.coords[1], item.coords[0]);
+    var marker = markers[item._id];
+    if (marker) {
+        marker.setLatLng(latlng);
     }
 }
 
@@ -102,7 +117,7 @@ function onMapClick(e) {
     map.openPopup(popup);
 }
 
-function onAddPoint(form) {
+function addPoint(form) {
     $.post(urladd, $(form).serialize(),
         function(data){
             if (!data.ok) {
@@ -115,8 +130,18 @@ function onAddPoint(form) {
     return false;
 }
 
-function onDelPoint(id, link) {
+function deletePoint(id) {
     $.post(urldel, {'id': id},
+        function(data){
+            if (!data.ok) {
+                alert("An error occured while deleting");
+            }
+        }, "json");
+    return false;
+}
+
+function movePoint(id, latlng) {
+    $.post(urlmove, {'id': id, 'coords': latlng.lng + ',' + latlng.lat},
         function(data){
             if (!data.ok) {
                 alert("An error occured while deleting");

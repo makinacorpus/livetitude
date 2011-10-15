@@ -16,6 +16,7 @@
                 urljson = '{{ url_for("points", map_id=map_id) }}',
                 urladd = '{{ url_for("add_point", map_id=map_id) }}',
                 urldel = '{{ url_for("del_point", map_id=map_id) }}',
+                urlmove = '{{ url_for("move_point", map_id=map_id) }}',
                 urltiles = '{{ config.TILES_URL }}',
                 data_maxsize = {{ config.DATA_MAX_SIZE }};
         </script>
@@ -36,14 +37,14 @@
         <!-- Mustache templates -->
         <div id="template_marker">
             {{{data}}}
-            <a id="delete-{{_id}}" href="#" onclick="return onDelPoint('{{_id}}',this);">delete</a>
+            <a id="delete-{{_id}}" href="#" onclick="return deletePoint('{{_id}}');">delete</a>
             {{#timestamp}}
             <div class="timestamp">{{timestamp}}</div>
             {{/timestamp}}
         </div>
         <div id="template_addpoint">
             <p>Add a point at ({{lat}}, {{lon}}) ?</p>
-            <form id="addpoint" onsubmit="return onAddPoint(this);"> 
+            <form id="addpoint" onsubmit="return addPoint(this);"> 
                 <span class="class1"><input type="radio" name="classid" value="1"/></span> 
                 <span class="class2"><input type="radio" name="classid" value="2"/></span> 
                 <span class="class3"><input type="radio" name="classid" value="3"/></span> 

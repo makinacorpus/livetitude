@@ -110,6 +110,32 @@ def del_point(map_id):
     return simplejson.dumps({'ok': state})
 
 
+@app.route("/<map_id>/move", methods=['POST'])
+def move_point(map_id):
+    try:
+        state = False
+        docid = request.values['id']
+        doc = g.couch[docid]
+        # Data Validation
+        coords = map(float, request.values['coords'].split(','))
+        if len(coords) != 2 or abs(coords[0]) > 180 or abs(coords[1]) > 90:
+            raise ValueError("Invalid coordinates %s" % coords)
+        doc['coords'] = coords
+        g.couch.save(doc)
+        # Send to websocket !
+        if settings.PUSHER_ID:
+            p = pusher.Pusher()
+            p['points-%s' % map_id].trigger('move', doc)
+        state = True
+    except (ResourceNotFound, 
+            ResourceConflict,
+            KeyError, 
+            AssertionError), e:
+        print e
+        pass
+    return simplejson.dumps({'ok': state})
+
+
 if __name__ == "__main__":
     pusher.app_id = settings.PUSHER_ID
     pusher.key = settings.PUSHER_KEY
