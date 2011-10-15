@@ -1,8 +1,12 @@
+var map,
+    popup,
+    markers = {};
+
 $(document).ready(function() {
     // Pusher connection
     var channel = pusher.subscribe('points-' + map_id);
     channel.bind('add', onPointAdded);
-    
+    channel.bind('del', onPointDeleted);
     
     // Map initialization
     map = new L.Map('map');
@@ -20,7 +24,12 @@ $(document).ready(function() {
             bounds = new L.LatLngBounds(),
             nb = 0;
         geojsonLayer.on("featureparse", function (e) {
-            if (e.properties) e.layer.bindPopup(buildMarkerPopup(e.properties));
+            if (e.properties) {
+                e.properties['_id'] = e.id;
+                e.layer.bindPopup(buildMarkerPopup(e.properties));
+                // Keep a reference on Marker
+                markers[e.id] = e.layer;
+            }
             bounds.extend(e.layer.getLatLng());
             setMarkerIcon(e.layer, e.properties);
             nb++;
@@ -66,7 +75,16 @@ function onPointAdded(item) {
             marker = new L.Marker(latlng);
     marker.bindPopup(buildMarkerPopup(item));
     setMarkerIcon(marker, item);
+    markers[item._id] = marker;
     map.addLayer(marker);
+}
+
+function onPointDeleted(item) {
+    var marker = markers[item._id];
+    if (marker) {
+        marker.closePopup();
+        map.removeLayer(marker);
+    }
 }
 
 function onLocationFound(e) {
@@ -92,6 +110,16 @@ function onAddPoint(form) {
             }
             else {
                 popup._close();
+            }
+        }, "json");
+    return false;
+}
+
+function onDelPoint(id, link) {
+    $.post(urldel, {'id': id},
+        function(data){
+            if (!data.ok) {
+                alert("An error occured while deleting");
             }
         }, "json");
     return false;

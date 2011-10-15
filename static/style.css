@@ -77,4 +77,12 @@ h1 {
 .leaflet-popup-content .timestamp {
     color: #7D7D7D;
     font-size: 11px;
+    display: inline;
+}
+
+.leaflet-popup-content a {
+    background: url(/static/trash.png) no-repeat;
+    color: transparent;
+    width: 16px;
+    display: inline;
 }

@@ -1,10 +1,12 @@
 import os
 import time
+from uuid import uuid4
 
 from flask import Flask, g, request, abort, render_template
 import flaskext.couchdb
 import couchdb
 from couchdb.design import ViewDefinition
+from couchdb import ResourceNotFound
 import simplejson
 import geojson
 from easydict import EasyDict as edict
@@ -68,6 +70,7 @@ def add_point(map_id):
 
         # Insert into database
         doc = {
+            'id' : uuid4().hex,
             'map': map_id,
             'coords': coords,
             'data': request.values['data'],
@@ -82,6 +85,24 @@ def add_point(map_id):
             p['points-%s' % map_id].trigger('add', doc)
         state = True
     except (KeyError, ValueError), e:
+        pass
+    return simplejson.dumps({'ok': state})
+
+
+@app.route("/<map_id>/del", methods=['POST'])
+def del_point(map_id):
+    try:
+        state = False
+        docid = request.values['id']
+        doc = g.couch[docid]
+        assert doc['map'] == map_id
+        g.couch.delete(doc)
+        # Send to websocket !
+        if settings.PUSHER_ID:
+            p = pusher.Pusher()
+            p['points-%s' % map_id].trigger('del', doc)
+        state = True
+    except (ResourceNotFound, KeyError, AssertionError), e:
         pass
     return simplejson.dumps({'ok': state})
 

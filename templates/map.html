@@ -11,12 +11,11 @@
         <!--[if lte IE 8]><link rel="stylesheet" href="http://leaflet.cloudmade.com/dist/leaflet.ie.css" /><![endif]-->
         <link rel="stylesheet" href="static/style.css" />
         <script type="text/javascript">
-            var map,
-                popup,
-                map_id = '{{ map_id }}',
+            var map_id = '{{ map_id }}',
                 pusher = new Pusher('{{ config.PUSHER_KEY }}'),
                 urljson = '{{ url_for("points", map_id=map_id) }}',
                 urladd = '{{ url_for("add_point", map_id=map_id) }}',
+                urldel = '{{ url_for("del_point", map_id=map_id) }}',
                 urltiles = '{{ config.TILES_URL }}',
                 data_maxsize = {{ config.DATA_MAX_SIZE }};
         </script>
@@ -37,6 +36,7 @@
         <!-- Mustache templates -->
         <div id="template_marker">
             {{{data}}}
+            <a id="delete-{{_id}}" href="#" onclick="return onDelPoint('{{_id}}',this);">delete</a>
             {{#timestamp}}
             <div class="timestamp">{{timestamp}}</div>
             {{/timestamp}}
