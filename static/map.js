@@ -20,6 +20,20 @@ $(document).ready(function() {
     map.on('locationfound', onLocationFound);
     map.on('click', onMapClick);
 
+    // Default map location (location hash)
+    var defaultloc = null;
+    if (window.location.hash) {
+        defaultloc = window.location.hash.replace('#', '').split('/');
+    }
+    if (defaultloc && defaultloc.length == 3) {
+        map.setView(new L.LatLng(defaultloc[2], defaultloc[1]), defaultloc[0]); 
+    }
+    else {
+        map.setView(new L.LatLng(0, 0), 2);
+    }
+    updateHash();
+    map.on('moveend', updateHash);
+
     // Tiles layer
     var cloudmade = new L.TileLayer(urltiles, {maxZoom: 18, 
                                                attribution: 'Developed by <a href="http://makina-corpus.com">Makina Corpus</a> — Map data &copy; 2011 OpenStreetMap contributors'});
@@ -31,23 +45,27 @@ $(document).ready(function() {
             bounds = new L.LatLngBounds(),
             nb = 0;
         geojsonLayer.on("featureparse", function (e) {
-            if (e.properties) {
-                e.properties['_id'] = e.id;
-                e.layer.bindPopup(buildMarkerPopup(e.properties));
-                // Keep a reference on Marker
-                markers[e.id] = e.layer;
+            // Initialize popups with feature properties
+            if (!e.properties) {
+                e.properties = {};
             }
-            bounds.extend(e.layer.getLatLng());
+            e.properties['_id'] = e.id;
+            e.layer.bindPopup(buildMarkerPopup(e.properties));
+            // Keep a reference on Marker
+            markers[e.id] = e.layer;
             initMarker(e.layer, e.properties);
+            // Compute layer bounds
+            bounds.extend(e.layer.getLatLng());
             nb++;
         });
         geojsonLayer.addGeoJSON(data);
         map.addLayer(geojsonLayer);
-        if (nb>0) {
+        // If no default location and geojson not empty : fit to layer
+        if (!defaultloc && nb>0) {
             map.fitBounds(bounds);
+            updateHash();
         }
     });
-    map.setView(new L.LatLng(0, 0), 2); 
     
     // Follow me ?
     $("input#followme").change(function() {
@@ -61,6 +79,16 @@ $(document).ready(function() {
         }
     });
 });
+
+function updateHash(e) {
+    var hash = map.getZoom() + '/' + map.getCenter().lng.toFixed(4) + '/' + map.getCenter().lat.toFixed(4),
+      regexp = new RegExp('embed=true(.*)"');
+    window.location.hash = hash;
+    if($('#info').length > 0) {
+        $('input#permalink').val(window.location);
+        $('input#embed').val($('input#embed').val().replace(regexp, 'embed=true#' + hash + '"'));
+    }
+}
 
 function buildMarkerPopup(properties) {
     var template = $('#template_marker').html();

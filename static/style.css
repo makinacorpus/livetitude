@@ -37,6 +37,7 @@ h1 {
 #info p {
     margin-bottom: 20px;
 }
+
 #users span.number {
     background: url(/static/users.png) no-repeat;
     padding-left: 18px;
@@ -59,6 +60,13 @@ h1 {
 
 .leaflet-popup-content {
     text-align: center;
+}
+
+.leaflet-popup-content span[class^="class"] {
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
 }
 
 .leaflet-popup-content .class1 { background-color: red; }
