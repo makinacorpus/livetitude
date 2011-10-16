@@ -11,6 +11,11 @@
         <!--[if lte IE 8]><link rel="stylesheet" href="http://leaflet.cloudmade.com/dist/leaflet.ie.css" /><![endif]-->
         <link rel="stylesheet" href="static/style.css" />
         <script type="text/javascript">
+            {% if config.DEBUG %}
+                Pusher.log = function(message) {
+                    if (window.console && window.console.log) window.console.log(message);
+                };
+            {% endif %}
             var map_id = '{{ map_id }}',
                 pusher = new Pusher('{{ config.PUSHER_KEY }}'),
                 urljson = '{{ url_for("points", map_id=map_id) }}',
@@ -28,6 +33,9 @@
         <div id="info">
             <h1>{{ map_id }}</h1>
             <p>Single clic to add points.</p>
+            <div id="users">
+                <span class="number">?</span>
+            </div>
             <input id="followme" type="checkbox"/>
             <label for="followme">Follow me !</label><br/>
             <label for="embed">&lt;&gt;</label>

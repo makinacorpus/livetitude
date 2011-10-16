@@ -37,6 +37,10 @@ h1 {
 #info p {
     margin-bottom: 20px;
 }
+#users span.number {
+    background: url(/static/users.png) no-repeat;
+    padding-left: 18px;
+}
 
 #go {
     width: 100%;

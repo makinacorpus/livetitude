@@ -1,5 +1,6 @@
 var map,
     popup,
+    members = {},
     markers = {};
 
 $(document).ready(function() {
@@ -8,6 +9,11 @@ $(document).ready(function() {
     channel.bind('add', onPointAdded);
     channel.bind('del', onPointDeleted);
     channel.bind('move', onPointMoved);
+    
+    channel = pusher.subscribe('presence-'+ map_id);
+    channel.bind('pusher:subscription_succeeded', onSubscription);
+    channel.bind('pusher:member_added', onMemberJoin);
+    channel.bind('pusher:member_removed', onMemberLeft);
     
     // Map initialization
     map = new L.Map('map');
@@ -75,6 +81,23 @@ function initMarker(m, properties) {
     var icon = {},
         classid = properties.classid ? properties.classid : 5;
     m.setIcon(new L.Icon('static/marker'+classid+'.png'));
+}
+
+function onSubscription(presentmembers) {
+    presentmembers.each(function(member) {
+        members[member.id] = member.info;
+    });
+    $('#users span.number').html($(members).size());
+}
+
+function onMemberJoin(member) {
+    members[member.id] = member.info;
+    $('#users span.number').html($(members).size());
+}
+
+function onMemberLeft(member) {
+    delete members[member.id];
+    $('#users span.number').html($(members).size());
 }
 
 function onPointAdded(item) {

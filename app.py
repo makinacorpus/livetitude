@@ -56,6 +56,20 @@ def points(map_id):
     return geojson.dumps(mapcontent)
 
 
+@app.route("/pusher/auth", methods=['POST'])
+def pusher_auth():
+    try:
+        if settings.PUSHER_ID:
+            p = pusher.Pusher()
+            socket = request.values['socket_id']
+            channel = request.values['channel_name']
+            response = p[channel].authenticate(socket, {'user_id': socket})
+            return simplejson.dumps(response)
+    except KeyError, e:
+        pass
+    abort(403)
+
+
 @app.route("/<map_id>/add", methods=['POST'])
 def add_point(map_id):
     try:
@@ -129,6 +143,7 @@ def move_point(map_id):
         state = True
     except (ResourceNotFound, 
             ResourceConflict,
+            ValueError,
             KeyError, 
             AssertionError), e:
         print e
