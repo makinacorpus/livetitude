@@ -1,5 +1,8 @@
 var map,
     popup,
+    followme = false,
+    shareme = false,
+    sharechannel,
     members = {},
     markers = {};
 
@@ -14,6 +17,9 @@ $(document).ready(function() {
     channel.bind('pusher:subscription_succeeded', onSubscription);
     channel.bind('pusher:member_added', onMemberJoin);
     channel.bind('pusher:member_removed', onMemberLeft);
+    
+    sharechannel = pusher.subscribe('private-location-'+ map_id);
+    channel.bind('client-location', onUserLocation);
     
     // Map initialization
     map = new L.Map('map');
@@ -51,16 +57,42 @@ $(document).ready(function() {
     
     // Follow me ?
     $("input#followme").change(function() {
-        if($(this).is(':checked')){
-            map.locate({watch: true,
-                        setView: true,
-                        enableHighAccuracy: true});
-        }
-        else {
-            map.stopLocate();
-        }
+        followme = $(this).is(':checked');
+        updateLocateState();
+    });
+    // Share me ?
+    $("input#shareme").change(function() {
+        shareme = $(this).is(':checked');
+        updateLocateState();
     });
 });
+
+function updateLocateState() {
+    if (followme || shareme) {
+        map.locate({watch: true,
+                    setView: followme,
+                    enableHighAccuracy: true});
+    }
+    else {
+        map.stopLocate();
+    }
+}
+
+function onLocationFound(e) {
+    if (followme) map.setView(e.latlng, 13);
+    if (shareme) {
+        sharechannel.trigger('client-location', {
+            'user_id': pusher.connection.socket_id, 
+            'coords': [e.latlng.lng, e.latlng.lat]
+        });
+    }
+}
+
+function onUserLocation(item) {
+    LatLng(items.coords[1], item.coords[0]);
+    var marker = members[item.user_id];
+    marker.setLatLong(latlng);
+}
 
 function buildMarkerPopup(properties) {
     var template = $('#template_marker').html();
@@ -123,10 +155,6 @@ function onPointMoved(item) {
     if (marker) {
         marker.setLatLng(latlng);
     }
-}
-
-function onLocationFound(e) {
-    map.setView(e.latlng, 13)
 }
 
 function onMapClick(e) {
