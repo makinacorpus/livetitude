@@ -19,8 +19,8 @@ $(document).ready(function() {
     channel.bind('pusher:member_removed', onMemberLeft);
     
     sharechannel = pusher.subscribe('private-location-'+ map_id);
-    channel.bind('client-location', onUserLocation);
-    
+    sharechannel.bind('client-location', onUserLocation);
+
     // Map initialization
     map = new L.Map('map');
     map.on('locationfound', onLocationFound);
@@ -89,9 +89,10 @@ function onLocationFound(e) {
 }
 
 function onUserLocation(item) {
-    LatLng(items.coords[1], item.coords[0]);
-    var marker = members[item.user_id];
-    marker.setLatLong(latlng);
+    var latlng = new LatLng(items.coords[1], item.coords[0]);
+        marker = new L.Circle(latlng, 15);
+    //TODO: move if already exist
+    map.addLayer(marker);
 }
 
 function buildMarkerPopup(properties) {
