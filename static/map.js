@@ -1,5 +1,8 @@
 var map,
     popup,
+    followme = false,
+    shareme = false,
+    sharechannel,
     members = {},
     markers = {};
 
@@ -15,6 +18,9 @@ $(document).ready(function() {
     channel.bind('pusher:member_added', onMemberJoin);
     channel.bind('pusher:member_removed', onMemberLeft);
     
+    sharechannel = pusher.subscribe('private-location-'+ map_id);
+    sharechannel.bind('client-location', onUserLocation);
+
     // Map initialization
     map = new L.Map('map');
     map.on('locationfound', onLocationFound);
@@ -69,14 +75,13 @@ $(document).ready(function() {
     
     // Follow me ?
     $("input#followme").change(function() {
-        if($(this).is(':checked')){
-            map.locate({watch: true,
-                        setView: true,
-                        enableHighAccuracy: true});
-        }
-        else {
-            map.stopLocate();
-        }
+        followme = $(this).is(':checked');
+        updateLocateState();
+    });
+    // Share me ?
+    $("input#shareme").change(function() {
+        shareme = $(this).is(':checked');
+        updateLocateState();
     });
 });
 
@@ -87,6 +92,45 @@ function updateHash(e) {
     if($('#info').length > 0) {
         $('input#permalink').val(window.location);
         $('input#embed').val($('input#embed').val().replace(regexp, 'embed=true#' + hash + '"'));
+    }
+}
+
+function updateLocateState() {
+    if (followme || shareme) {
+        map.locate({watch: true,
+                    setView: followme,
+                    enableHighAccuracy: true});
+    }
+    else {
+        map.stopLocate();
+    }
+}
+
+function onLocationFound(e) {
+    var data = {
+        'user_id': pusher.connection.socket_id, 
+        'coords': [e.latlng.lng, e.latlng.lat]
+    };
+    if (followme) map.setView(e.latlng, 13);
+    if (shareme) {
+        sharechannel.trigger('client-location', data);
+    }
+    if (followme || shareme) {
+        onUserLocation(data);
+    }
+}
+
+function onUserLocation(item) {
+    var latlng = new L.LatLng(item.coords[1], item.coords[0]);
+    var member = members[item.user_id];
+    if (!member) {
+        var marker = new L.CircleMarker(latlng, 
+                                        {color: '#f00'});
+        members[item.user_id] = marker;
+        map.addLayer(marker);
+    }
+    else {
+        member.setLatLng(latlng);
     }
 }
 
@@ -112,20 +156,22 @@ function initMarker(m, properties) {
 }
 
 function onSubscription(presentmembers) {
-    presentmembers.each(function(member) {
-        members[member.id] = member.info;
-    });
-    $('#users span.number').html($(members).size());
+    $('#users span.number').html(presentmembers.count);
 }
 
 function onMemberJoin(member) {
-    members[member.id] = member.info;
-    $('#users span.number').html($(members).size());
+    var counter = $('#users span.number');
+    counter.html(parseInt(counter.html())+1);
 }
 
 function onMemberLeft(member) {
-    delete members[member.id];
-    $('#users span.number').html($(members).size());
+    var marker = members[member.id];
+    if (marker) {
+        map.removeLayer(marker);
+        delete members[member.id];
+    }
+    var counter = $('#users span.number');
+    counter.html(parseInt(counter.html())-1);
 }
 
 function onPointAdded(item) {
@@ -151,10 +197,6 @@ function onPointMoved(item) {
     if (marker) {
         marker.setLatLng(latlng);
     }
-}
-
-function onLocationFound(e) {
-    map.setView(e.latlng, 13)
 }
 
 function onMapClick(e) {

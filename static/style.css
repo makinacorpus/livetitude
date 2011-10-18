@@ -24,23 +24,52 @@ h1 {
     float: right;
     bottom: 18px;
     right: 0px;
-    padding: 20px;
+    padding: 0px;
     box-shadow: 0 0 7px #CCCCCC;
     color: #5E5E5E;
     z-index: 10;
     text-align: center;
-    background: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.8);
 }
 #info h1, #info p {
     margin: 0px;
 }
 #info p {
+    margin-bottom: 10px;
+}
+
+#info #users {
+    display: inline-block;
+}
+
+#info #users span.number {
+    background: url(/static/users.png) no-repeat;
+    padding-left: 20px;
     margin-bottom: 20px;
 }
 
-#users span.number {
-    background: url(/static/users.png) no-repeat;
-    padding-left: 18px;
+#info #me {
+    display: inline-block;
+    background-color: rgba(255,255,255,0.6);
+    padding-left: 5px;
+    padding-right: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#info h2 {
+    color:  #aaaaaa;
+    font-size: 1em;
+    margin: 2px;
+}
+
+#info #share {
+    padding: 5px;
+    margin-top: 5px;
+    border-top: 2px solid white;
+    clear: left;
 }
 
 #go {
