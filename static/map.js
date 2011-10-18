@@ -79,20 +79,31 @@ function updateLocateState() {
 }
 
 function onLocationFound(e) {
+    var data = {
+        'user_id': pusher.connection.socket_id, 
+        'coords': [e.latlng.lng, e.latlng.lat]
+    };
     if (followme) map.setView(e.latlng, 13);
     if (shareme) {
-        sharechannel.trigger('client-location', {
-            'user_id': pusher.connection.socket_id, 
-            'coords': [e.latlng.lng, e.latlng.lat]
-        });
+        sharechannel.trigger('client-location', data);
+    }
+    if (followme || shareme) {
+        onUserLocation(data);
     }
 }
 
 function onUserLocation(item) {
-    var latlng = new LatLng(items.coords[1], item.coords[0]);
-        marker = new L.Circle(latlng, 15);
-    //TODO: move if already exist
-    map.addLayer(marker);
+    var latlng = new L.LatLng(item.coords[1], item.coords[0]);
+    var member = members[item.user_id];
+    if (!member) {
+        var marker = new L.CircleMarker(latlng, 
+                                        {color: '#f00'});
+        members[item.user_id] = marker;
+        map.addLayer(marker);
+    }
+    else {
+        member.setLatLng(latlng);
+    }
 }
 
 function buildMarkerPopup(properties) {
@@ -117,20 +128,22 @@ function initMarker(m, properties) {
 }
 
 function onSubscription(presentmembers) {
-    presentmembers.each(function(member) {
-        members[member.id] = member.info;
-    });
-    $('#users span.number').html($(members).size());
+    $('#users span.number').html(presentmembers.count);
 }
 
 function onMemberJoin(member) {
-    members[member.id] = member.info;
-    $('#users span.number').html($(members).size());
+    var counter = $('#users span.number');
+    counter.html(parseInt(counter.html())+1);
 }
 
 function onMemberLeft(member) {
-    delete members[member.id];
-    $('#users span.number').html($(members).size());
+    var marker = members[member.id];
+    if (marker) {
+        map.removeLayer(marker);
+        delete members[member.id];
+    }
+    var counter = $('#users span.number');
+    counter.html(parseInt(counter.html())-1);
 }
 
 function onPointAdded(item) {
