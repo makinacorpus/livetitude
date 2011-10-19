@@ -7,24 +7,9 @@ var map,
     markers = {};
 
 $(document).ready(function() {
-    // Pusher connection
-    var channel = pusher.subscribe('points-' + map_id);
-    channel.bind('add', onPointAdded);
-    channel.bind('del', onPointDeleted);
-    channel.bind('move', onPointMoved);
-    
-    channel = pusher.subscribe('presence-'+ map_id);
-    channel.bind('pusher:subscription_succeeded', onSubscription);
-    channel.bind('pusher:member_added', onMemberJoin);
-    channel.bind('pusher:member_removed', onMemberLeft);
-    
-    sharechannel = pusher.subscribe('private-location-'+ map_id);
-    sharechannel.bind('client-location', onUserLocation);
 
     // Map initialization
     map = new L.Map('map');
-    map.on('locationfound', onLocationFound);
-    map.on('click', onMapClick);
 
     // Default map location (location hash)
     var defaultloc = null;
@@ -73,16 +58,36 @@ $(document).ready(function() {
         }
     });
     
-    // Follow me ?
-    $("input#followme").change(function() {
-        followme = $(this).is(':checked');
-        updateLocateState();
-    });
-    // Share me ?
-    $("input#shareme").change(function() {
-        shareme = $(this).is(':checked');
-        updateLocateState();
-    });
+    if (!embed) {
+        // Pusher connection
+        var channel = pusher.subscribe('points-' + map_id);
+        channel.bind('add', onPointAdded);
+        channel.bind('del', onPointDeleted);
+        channel.bind('move', onPointMoved);
+        
+        channel = pusher.subscribe('presence-'+ map_id);
+        channel.bind('pusher:subscription_succeeded', onSubscription);
+        channel.bind('pusher:member_added', onMemberJoin);
+        channel.bind('pusher:member_removed', onMemberLeft);
+        
+        sharechannel = pusher.subscribe('private-location-'+ map_id);
+        sharechannel.bind('client-location', onUserLocation);
+        
+        // Map interaction
+        map.on('locationfound', onLocationFound);
+        map.on('click', onMapClick);
+        
+        // Follow me ?
+        $("input#followme").change(function() {
+            followme = $(this).is(':checked');
+            updateLocateState();
+        });
+        // Share me ?
+        $("input#shareme").change(function() {
+            shareme = $(this).is(':checked');
+            updateLocateState();
+        });
+    }
 });
 
 function updateHash(e) {
