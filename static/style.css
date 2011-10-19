@@ -7,6 +7,18 @@ body {
     font-family: Ubuntu, sans-serif;
 }
 
+#description {
+    width: 170px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: justify;
+}
+
+#credits {
+    font-size: 13px;
+    text-align: center;
+}
+
 #template_marker {
     display: none;
 }
