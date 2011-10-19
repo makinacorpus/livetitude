@@ -64,7 +64,8 @@
                 <label for="permalink"><img src="static/link.png"></label>
                 <input id="permalink" type="text" value="{{ request.base_url }}"><br/>
                 <label for="embed">&lt;&gt;</label>
-                <input id="embed" type="text" value="&lt;iframe width=&quot;425&quot; height=&quot;350&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;{{ request.base_url }}?embed=true&quot;&gt;&lt;/iframe&gt;">
+                <input id="embed" type="text" value="&lt;iframe width=&quot;425&quot; height=&quot;350&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;{{ request.base_url }}?embed=true&quot;&gt;&lt;/iframe&gt;"><br/>
+                <a id="download" href="{{ url_for("points", map_id=map_id) }}">Download map data</a>
             </div>
         </div>
         <!-- Mustache templates -->
