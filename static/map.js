@@ -7,6 +7,10 @@ var map,
     markers = {};
 
 $(document).ready(function() {
+    // Auto select on focus
+    $('input.autoselect').click(function() {
+        this.select();
+    });
 
     // Map initialization
     map = new L.Map('map');
