@@ -158,6 +158,9 @@ function initMarker(m, properties) {
     m.on('dragend', function(e) {
         movePoint(properties._id, e.target.getLatLng());
     });
+    m.on('dblclick', function(e) {
+        map.fitBounds(new L.LatLngBounds(m.getLatLng(), m.getLatLng()));
+    });
     // Icon
     var icon = {},
         classid = properties.classid ? properties.classid : 5;
