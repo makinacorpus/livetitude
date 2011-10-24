@@ -39,7 +39,7 @@
         <!-- Mustache template -->
         {% raw %}
         <div id="template_marker">
-            {{{data}}}
+            <div class="marker-data">{{{data}}}</div>
             {{#timestamp}}
             <div class="timestamp">{{timestamp}}</div>
             {{/timestamp}}
@@ -71,7 +71,7 @@
         <!-- Mustache templates -->
         {% raw %}
         <div id="template_marker">
-            {{{data}}}
+            <div class="marker-data">{{{data}}}</div>
             <a id="delete-{{_id}}" href="#" onclick="return deletePoint('{{_id}}');">delete</a>
             {{#timestamp}}
             <div class="timestamp">{{timestamp}}</div>

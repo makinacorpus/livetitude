@@ -104,6 +104,10 @@ h1 {
     text-align: center;
 }
 
+.leaflet-popup-content .marker-data {
+    display: block;
+}
+
 .leaflet-popup-content span[class^="class"] {
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
