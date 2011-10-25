@@ -47,7 +47,7 @@
         {% endraw %}
         {% else %}
         <div id="info">
-            <h1>{{ map_id }}</h1>
+            <a href="{{ url_for("viewmap", map_id=map_id) }}" title="Reset map view"><h1>{{ map_id }}</h1></a>
             <p>Single clic to add points.</p>
             <div id="users">
                 <h2>Users</h2>
@@ -56,9 +56,9 @@
             <div id="me">
                 <h2>My position</h2>
                 <input id="followme" type="checkbox"/>
-                <label for="followme">Follow</label>
+                <label for="followme" title="Center map on your current position">Follow</label>
                 <input id="shareme" type="checkbox"/>
-                <label for="shareme">Share</label>
+                <label for="shareme" title="Share your position with others">Share</label>
             </div>
             <div id="share">
                 <label for="permalink"><img src="static/link.png"></label>

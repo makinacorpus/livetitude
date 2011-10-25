@@ -31,6 +31,11 @@ h1 {
     text-align: center;
     background: rgba(255,255,255,0.8);
 }
+
+#info a {
+    color: #5E5E5E; 
+}
+
 #info h1, #info p {
     margin: 0px;
 }
